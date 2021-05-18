@@ -62,6 +62,31 @@ def parse_load_tracks(*args):
 		stack.append(x)
 	queue_list(track_list)
 
+root = Tk()
+root.title("djpitviper")
+
+mainframe = ttk.Frame(root, padding="100 100 100 100")
+mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
+root.columnconfigure(0, weight=1)
+root.rowconfigure(0, weight=1)
+
+playlist_id = StringVar()
+playlist_id_entry = ttk.Entry(mainframe, width=100)
+playlist_id_entry.grid(column=2, row=1, sticky=(W, E))
+
+ttk.Button(mainframe, text="Load Playlist", command=parse_load_tracks).grid(column=2, row=2, sticky=W)
+ttk.Button(mainframe, text="Skip Track", command=skip_track).grid(column=2, row=3, sticky=W)
+
+#ttk.Label(mainframe, text="feet").grid(column=3, row=1, sticky=W)
+
+for child in mainframe.winfo_children(): 
+    child.grid_configure(padx=5, pady=5)
+
+playlist_id_entry.focus()
+root.bind("<Return>", parse_load_tracks)
+
+root.mainloop()
+
 """
 while True:
 	#print(stack)
