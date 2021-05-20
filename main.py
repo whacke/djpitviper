@@ -35,18 +35,16 @@ def parse_playlist(playlist_id):
 	for item in results:
 		count = count + 1
 		track = item['track']
-		song_obj = Song(track['uri'], spotify_obj)
+		song_obj = Song(track, spotify_obj)
 		track_list.append(song_obj)
 
 	delta = time.time() - start
 	print("%d tracks analyzed in %.2f seconds" % (count, delta,))
-	print(track_list)
 	return track_list
 
 def queue_list(tracks):
 	for track in tracks:
 		spotify_obj.add_to_queue(track.song_id)
-		time.sleep(0.2)
 
 def skip_track(): #WORKING
 	track = Song(spotify_obj.currently_playing()['item']['uri'], spotify_obj)
@@ -62,7 +60,7 @@ def parse_load_tracks(*args):
 	print(track_list)
 	for x in track_list:
 		stack.append(x)
-	queue_list(track_list)
+	#queue_list(track_list)
 
 root = Tk()
 root.title("djpitviper")
@@ -87,22 +85,23 @@ for child in mainframe.winfo_children():
 playlist_id_entry.focus()
 root.bind("<Return>", parse_load_tracks)
 
-root.mainloop()
+#root.mainloop()
 
-"""
+#"""
 while True:
 	#print(stack)
 	root.update_idletasks()
 	root.update()
 	if len(stack) > 0:
-		#time.sleep(60.0 - ((time.time() - start_time) % 60.0))
-		print(stack)
+		print(spotify_obj.currently_playing()['item']['uri'])
+		exit()
 		temp = Song(spotify_obj.currently_playing()['item']['uri'], spotify_obj)
-		if temp.time_left() <= 12050.0:
+		if temp.time_left() <= 1100.0:
 			spotify_obj.add_to_queue(stack.pop().song_id)
+			time.sleep(2)
 
 			#spotify_obj.add_to_queue(stack.pop().song_id)
-"""
+#"""
 
 #print(json.dumps(spotify_obj.current_playback(), indent=4))
 
