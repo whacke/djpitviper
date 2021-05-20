@@ -4,6 +4,8 @@ import json
 import time
 from song import Song
 from collections import deque
+from tkinter import *
+from tkinter import ttk
 
 stack = deque()
 start_time = time.time()
