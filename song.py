@@ -1,9 +1,10 @@
 import json
 class Song:
 
-	def __init__(self, song_id, spotify):
+	def __init__(self, song_obj, spotify):
 		self.spotify = spotify
-		self.song_id = song_id
+		self.song_obj = song_obj
+		self.song_id = song_obj['uri']
 		
 		analysis = self.spotify.audio_analysis(self.song_id)
 		data = json.dumps(analysis, indent=4)
@@ -20,16 +21,7 @@ class Song:
 		self.duration = int((float(duration) - 11) * 1000)
 
 	def __repr__(self):
-		return str(self.tempo)
+		return self.song_obj['name']
 
 	def time_left(self):
-		analysis = self.spotify.audio_analysis(self.song_id)
-		data = json.dumps(analysis, indent=4)
-		pieces = data.split()
-
-		index = pieces.index('\'progress_ms\':')
-		progress = pieces[index+1] #unfiltered tempo
-		progress = progress.replace(',', '')
-		progress = int(float(tempo))
-
-		return self.duration - progress
+		return self.song_obj['progress_ms'] / 1000
