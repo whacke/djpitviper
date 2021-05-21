@@ -22,6 +22,3 @@ class Song:
 
 	def __repr__(self):
 		return self.song_obj['name']
-
-	def time_left(self):
-		return self.song_obj['progress_ms'] / 1000
