@@ -107,10 +107,9 @@ while True:
 		time_left = duration - progress
 
 		if time_left <= 12500.0:
-			spotify_obj.add_to_queue(stack.pop().song_id) #THIS POP COULD BE POPLEFT
-			print("SHOULD ADD TO QUEUE, DELAY 2 SECONDS")
-			time.sleep(2)
-			print("DELAY OVER!")
+			spotify_obj.add_to_queue(stack.pop().song_id) #THIS POP COULD BE POPLEFT TO REVERSE ORDER
+			time.sleep(3)
+			print(*stack, sep = "\n")
 
 			#spotify_obj.add_to_queue(stack.pop().song_id)
 #"""
