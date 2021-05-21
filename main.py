@@ -89,16 +89,28 @@ root.bind("<Return>", parse_load_tracks)
 
 #"""
 while True:
-	#print(stack)
 	root.update_idletasks()
 	root.update()
 	if len(stack) > 0:
-		print(spotify_obj.currently_playing()['item']['uri'])
-		exit()
-		temp = Song(spotify_obj.currently_playing()['item']['uri'], spotify_obj)
-		if temp.time_left() <= 1100.0:
-			spotify_obj.add_to_queue(stack.pop().song_id)
+		
+		data = json.dumps(spotify_obj.current_playback(), indent=4)
+		pieces = data.split()
+
+		duration = pieces[pieces.index('"duration_ms":') + 1]
+		duration = duration.replace(',', '')
+		duration = int(duration)
+
+		progress = pieces[pieces.index('"progress_ms":') + 1]
+		progress = progress.replace(',', '')
+		progress = int(progress)
+
+		time_left = duration - progress
+
+		if time_left <= 12500.0:
+			spotify_obj.add_to_queue(stack.pop().song_id) #THIS POP COULD BE POPLEFT
+			print("SHOULD ADD TO QUEUE, DELAY 2 SECONDS")
 			time.sleep(2)
+			print("DELAY OVER!")
 
 			#spotify_obj.add_to_queue(stack.pop().song_id)
 #"""
