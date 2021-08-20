@@ -3,12 +3,12 @@ from spotipy.oauth2 import SpotifyOAuth
 import json
 import time
 from song import Song
-from collections import deque
+#from collections import deque
 from tkinter import *
 from tkinter import ttk
+import random
 
-stack = deque()
-start_time = time.time()
+#stack = deque()
 
 cid = 'f604655815fc4c69b4888d600e2823d3'
 sid = '7960cf00874949e4a044526506edd06a'
@@ -43,8 +43,19 @@ def parse_playlist(playlist_id):
 	return track_list
 
 def queue_list(tracks):
-	for track in tracks:
-		spotify_obj.add_to_queue(track.song_id)
+	bucket = [0]
+	bucket.pop(0)
+	while(len(tracks) > 0):
+		while len(bucket) <= 5:
+			if len(tracks) > 0:
+				bucket.append(tracks.pop(0)) #change to tracks.pop(len(tracks) - 1) to reverse song order
+		print(bucket)
+		random.shuffle(bucket) #shake the bucket
+		print(bucket)
+		while(len(bucket) > 0):
+			spotify_obj.add_to_queue(bucket.pop(0).song_id)
+		bucket = []
+
 
 def skip_track(): #WORKING
 	track = Song(spotify_obj.currently_playing()['item']['uri'], spotify_obj)
@@ -58,9 +69,9 @@ def parse_load_tracks(*args):
 	track_list = parse_playlist(uri)
 	track_list.sort(key = lambda x: x.tempo) #sort list by tempo
 	print(track_list)
-	for x in track_list:
-		stack.append(x)
-	#queue_list(track_list)
+	#for x in track_list:
+	#	stack.append(x)
+	queue_list(track_list)
 
 root = Tk()
 root.title("djpitviper")
@@ -85,23 +96,23 @@ for child in mainframe.winfo_children():
 playlist_id_entry.focus()
 root.bind("<Return>", parse_load_tracks)
 
-#root.mainloop()
+root.mainloop()
 
-#"""
+"""
+timer = 0
 while True:
 	#print(stack)
 	root.update_idletasks()
 	root.update()
-	if len(stack) > 0:
-		print(spotify_obj.currently_playing()['item']['uri'])
-		exit()
-		temp = Song(spotify_obj.currently_playing()['item']['uri'], spotify_obj)
+	if len(stack) > 0 and time.time() >= (timer + 10):
+		temp = Song(spotify_obj.currently_playing(), spotify_obj)
 		if temp.time_left() <= 1100.0:
 			spotify_obj.add_to_queue(stack.pop().song_id)
 			time.sleep(2)
+			timer += 10
 
 			#spotify_obj.add_to_queue(stack.pop().song_id)
-#"""
+"""
 
 #print(json.dumps(spotify_obj.current_playback(), indent=4))
 
