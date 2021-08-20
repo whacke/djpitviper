@@ -101,15 +101,36 @@ root.mainloop()
 """
 timer = 0
 while True:
-	#print(stack)
 	root.update_idletasks()
 	root.update()
+<<<<<<< HEAD
 	if len(stack) > 0 and time.time() >= (timer + 10):
 		temp = Song(spotify_obj.currently_playing(), spotify_obj)
 		if temp.time_left() <= 1100.0:
 			spotify_obj.add_to_queue(stack.pop().song_id)
 			time.sleep(2)
 			timer += 10
+=======
+	if len(stack) > 0:
+		
+		data = json.dumps(spotify_obj.current_playback(), indent=4)
+		pieces = data.split()
+
+		duration = pieces[pieces.index('"duration_ms":') + 1]
+		duration = duration.replace(',', '')
+		duration = int(duration)
+
+		progress = pieces[pieces.index('"progress_ms":') + 1]
+		progress = progress.replace(',', '')
+		progress = int(progress)
+
+		time_left = duration - progress
+
+		if time_left <= 12500.0:
+			spotify_obj.add_to_queue(stack.pop().song_id) #THIS POP COULD BE POPLEFT TO REVERSE ORDER
+			time.sleep(3)
+			print(*stack, sep = "\n")
+>>>>>>> af2601a14cde9df7997186c462198884e4bd14ea
 
 			#spotify_obj.add_to_queue(stack.pop().song_id)
 """
