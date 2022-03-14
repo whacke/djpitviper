@@ -3,12 +3,13 @@ from spotipy.oauth2 import SpotifyOAuth
 import json
 import time
 from song import Song
-#from collections import deque
+from collections import deque
 from tkinter import *
 from tkinter import ttk
 import random
+import sys
 
-#stack = deque()
+stack = deque()
 
 cid = 'f604655815fc4c69b4888d600e2823d3'
 sid = '7960cf00874949e4a044526506edd06a'
@@ -53,7 +54,8 @@ def queue_list(tracks):
 		random.shuffle(bucket) #shake the bucket
 		print(bucket)
 		while(len(bucket) > 0):
-			spotify_obj.add_to_queue(bucket.pop(0).song_id)
+			#spotify_obj.add_to_queue(bucket.pop(0).song_id)
+			stack.append(bucket.pop(0))
 		bucket = []
 
 
@@ -62,7 +64,7 @@ def skip_track(): #WORKING
 	spotify_obj.seek_track(track.duration)
 
 def parse_load_tracks(*args):
-	uri = playlist_id_entry.get()
+	uri = sys.argv[1]
 	if uri == "":
 		return
 	print("Starting parse...")
@@ -73,46 +75,12 @@ def parse_load_tracks(*args):
 	#	stack.append(x)
 	queue_list(track_list)
 
-root = Tk()
-root.title("djpitviper")
-
-mainframe = ttk.Frame(root, padding="100 100 100 100")
-mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
-root.columnconfigure(0, weight=1)
-root.rowconfigure(0, weight=1)
-
-playlist_id = StringVar()
-playlist_id_entry = ttk.Entry(mainframe, width=100)
-playlist_id_entry.grid(column=2, row=1, sticky=(W, E))
-
-ttk.Button(mainframe, text="Load Playlist", command=parse_load_tracks).grid(column=2, row=2, sticky=W)
-ttk.Button(mainframe, text="Skip Track", command=skip_track).grid(column=2, row=3, sticky=W)
-
-#ttk.Label(mainframe, text="feet").grid(column=3, row=1, sticky=W)
-
-for child in mainframe.winfo_children(): 
-    child.grid_configure(padx=5, pady=5)
-
-playlist_id_entry.focus()
-root.bind("<Return>", parse_load_tracks)
-
-root.mainloop()
-
-"""
-timer = 0
+parse_load_tracks()
+print("The current queue is:")
+print(stack)
 while True:
-	root.update_idletasks()
-	root.update()
-<<<<<<< HEAD
-	if len(stack) > 0 and time.time() >= (timer + 10):
-		temp = Song(spotify_obj.currently_playing(), spotify_obj)
-		if temp.time_left() <= 1100.0:
-			spotify_obj.add_to_queue(stack.pop().song_id)
-			time.sleep(2)
-			timer += 10
-=======
-	if len(stack) > 0:
-		
+	if len(stack) > 1:
+		#temp = Song(spotify_obj.currently_playing(), spotify_obj)
 		data = json.dumps(spotify_obj.current_playback(), indent=4)
 		pieces = data.split()
 
@@ -124,16 +92,18 @@ while True:
 		progress = progress.replace(',', '')
 		progress = int(progress)
 
-		time_left = duration - progress
+		time_left = (duration - progress)/1000
+		time_left = time_left - 15
+		#print(time_left)
+		if(time_left > 0):
+			time.sleep(time_left)
+			spotify_obj.add_to_queue(stack.pop().song_id)
+			print("The current queue is:")
+			print(stack)
+	else:
+		spotify_obj.add_to_queue(stack.pop().song_id)
+		print("[[[WARNING, QUEUE ENDING]]]")
 
-		if time_left <= 12500.0:
-			spotify_obj.add_to_queue(stack.pop().song_id) #THIS POP COULD BE POPLEFT TO REVERSE ORDER
-			time.sleep(3)
-			print(*stack, sep = "\n")
->>>>>>> af2601a14cde9df7997186c462198884e4bd14ea
-
-			#spotify_obj.add_to_queue(stack.pop().song_id)
-"""
 
 #print(json.dumps(spotify_obj.current_playback(), indent=4))
 
